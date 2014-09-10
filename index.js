@@ -12,37 +12,41 @@ var https = require('https'),
 
 function make_request(options, success_callback, error_callback, data) {
 
-    var error_handler = function (err) {
+    var error_handler = function (err, status_code) {
         var json_message = err.message || err;
         try {
-            json_message = JSON.parse(err.message || err);
+            json_message = JSON.parse(json_message);
         } catch (error) {}
         if (typeof(error_callback) === 'function') {
-            error_callback(json_message);
+            error_callback(json_message, status_code);
         } else {
             console.log(json_message);
         }
     };
 
-    var success_handler = function (data) {
+    var success_handler = function (data, status_code) {
         var json_message = data;
         try {
             json_message = JSON.parse(data);
         } catch (error) {}
         if (typeof(success_callback) === 'function') {
-            success_callback(json_message);
+            success_callback(json_message, status_code);
         } else {
             console.log(json_message);
         }
     };
 
     var req = https.request(options, function(res) {
+        var body = '';
         res.setEncoding('utf8');
-        res.on('data', function (chunk) {
+        res.on('data', function(chunk) {
+            body += chunk;
+        });
+        res.on('end', function() {
             if (res.statusCode >= 400) {
-                error_handler(chunk);
+                error_handler(body, res.statusCode);
             } else {
-                success_handler(chunk);
+                success_handler(body, res.statusCode);
             }
         });
     });

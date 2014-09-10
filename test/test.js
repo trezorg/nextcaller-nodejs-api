@@ -10,6 +10,7 @@ var should = require("should"),
     phone = 2125558383,
     wrong_phone = 212555838,
     profile_id = "97d949a413f4ea8b85e9586e1f2d9a",
+    wrong_profile_id = profile_id + "XXXXXXXXXXX",
     api_key = "XXXXXXXXXXXXX",
     apio_secret = "YYYYYYYYYYYYYYY",
     client = new (require("../index.js").Client)(api_key, apio_secret),
@@ -114,14 +115,14 @@ var should = require("should"),
     };
 
 
-describe("getPhone", function () {
+describe("getPhone with correct phone number", function () {
     it("should return the correct response", function (done) {
         var phone_response_object_str = JSON.stringify(phone_response_object);
         nock("https://api.nextcaller.com")
-            .log(console.log)
             .get("/v2/records/?format=json&phone=" + phone)
             .reply(200, phone_response_object_str);
-        client.getPhone(phone, function (data) {
+        client.getPhone(phone, function (data, status_code) {
+            status_code.should.equal(200);
             data.records[0].phone[0].number.should.equal(phone.toString());
             data.records[0].id.should.equal(profile_id);
             done();
@@ -130,14 +131,14 @@ describe("getPhone", function () {
 });
 
 
-describe("getPhone", function () {
-    it("should not return the correct response with wrong phone", function (done) {
+describe("getPhone with incorrect phone number", function () {
+    it("should return 400 error", function (done) {
         var phone_error_object_str = JSON.stringify(wrong_phone_error);
         nock("https://api.nextcaller.com")
-            .log(console.log)
             .get("/v2/records/?format=json&phone=" + wrong_phone)
             .reply(400, phone_error_object_str);
-        client.getPhone(wrong_phone, null, function (data) {
+        client.getPhone(wrong_phone, null, function (data, status_code) {
+            status_code.should.equal(400);
             data.error.code.should.equal("555");
             done();
         });
@@ -145,14 +146,14 @@ describe("getPhone", function () {
 });
 
 
-describe("getProfile", function () {
+describe("getProfile with correct profile id", function () {
     it("should return the correct response", function (done) {
         var profile_response_object_str = JSON.stringify(profile_response_object);
         nock("https://api.nextcaller.com")
-            .log(console.log)
             .get("/v2/users/" + profile_id + "/?format=json")
             .reply(200, profile_response_object_str);
-        client.getProfile(profile_id, function (data) {
+        client.getProfile(profile_id, function (data, status_code) {
+            status_code.should.equal(200);
             data.phone[0].number.should.equal(phone.toString());
             data.id.should.equal(profile_id);
             done();
@@ -161,13 +162,27 @@ describe("getProfile", function () {
 });
 
 
-describe("updateProfile", function () {
+describe("getProfile with incorrect profile id", function () {
+    it("should return 404 response", function (done) {
+        nock("https://api.nextcaller.com")
+            .get("/v2/users/" + wrong_profile_id + "/?format=json")
+            .reply(404, "");
+        client.getProfile(wrong_profile_id, null, function (data, status_code) {
+            status_code.should.equal(404);
+            data.should.equal("");
+            done();
+        });
+    });
+});
+
+
+describe("updateProfile changing email", function () {
     it("should return the correct response", function (done) {
         nock("https://api.nextcaller.com")
-            .log(console.log)
             .post("/v2/users/" + profile_id + "/?format=json")
             .reply(204, "");
-        client.updateProfile(profile_id, profile_request_object, function (data) {
+        client.updateProfile(profile_id, profile_request_object, function (data, status_code) {
+            status_code.should.equal(204);
             data.should.equal("");
             done();
         });

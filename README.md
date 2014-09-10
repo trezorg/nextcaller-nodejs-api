@@ -20,10 +20,12 @@ Example
         phone_number = "121212...",
         module = require("nextcaller-nodejs-api"),
         client = module.Client(api_key, api_secret);
-    client.getPhone(phone_number, function (data) {
+    client.getPhone(phone_number, function (data, status_code) {
         console.log(data);
-    }, function (error) {
+        console.log(status_code);
+    }, function (error, status_code) {
         console.log(error);
+        console.log(status_code);
     });
 
 
@@ -52,12 +54,14 @@ API Items
     
     number - phone number
     success_callback - function called on a success result
-    function success_callback(data) {
+    function success_callback(data, status_code) {
         console.log(data);
+        console.log(status_code);
     }
     error_callback - function called on an error
-    function error_callback(error) {
+    function error_callback(error, status_code) {
         console.log(error);
+        console.log(status_code);
     }
 
 ### Get profile by id ###
@@ -68,12 +72,14 @@ API Items
     
     profile_id - id of a profile
     success_callback - function called on a success result
-    function success_callback(data) {
+    function success_callback(data, status_code) {
         console.log(data);
+        console.log(status_code);
     }
     error_callback - function called on an error
-    function error_callback(error) {
+    function error_callback(error, status_code) {
         console.log(error);
+        console.log(status_code);
     }
 
 ### Update profile ###
@@ -85,12 +91,14 @@ API Items
     profile_id - id of a profile
     data - data to update
     success_callback - function called on a success result
-    function success_callback(data) {
+    function success_callback(data, status_code) {
         console.log(data);
+        console.log(status_code);
     }
     error_callback - function called on an error
-    function error_callback(error) {
+    function error_callback(error, status_code) {
         console.log(error);
+        console.log(status_code);
     }
 
     Example:
@@ -98,10 +106,12 @@ API Items
     data = {
         "email": "test@test.com"
     }
-    function success_callback(data) {
-        console.log(data);
+    function success_callback(data, status_code) {
+        console.log("Response data: ", data);
+        console.log("Status code: ",status_code);
     }
-    function error_callback(error) {
-        console.log(error);
+    function error_callback(error, status_code) {
+        console.log("Error: ", error);
+        console.log("Status code: ",status_code);
     }
     client.updateProfile(profile_id, data, success_callback, error_callback);
