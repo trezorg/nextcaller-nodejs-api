@@ -1,21 +1,29 @@
 {
-  "name": "nextcaller-nodejs-api",
-  "version": "0.0.1",
-  "description": "A NodeJS wrapper around the Nextcaller API",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha"
-  },
-  "keywords": [
-    "nextcaller",
-    "nodejs",
-    "api"
-  ],
-  "author": "Ihar Niamilentsau <trezorg@gmail.com> (https://nextcaller.com/)",
-  "license": "MIT",
-  "dependencies": {
-    "should": ">0.0.0",
-    "mocha": ">0.0.0",
-    "nock": ">0.0.0"
-  }
+    "name": "nextcaller-nodejs-api",
+    "version": "0.0.1",
+    "description": "A NodeJS wrapper around the Nextcaller API",
+    "main": "index.js",
+    "scripts": {
+      "test": "mocha"
+    },
+    "keywords": [
+      "nextcaller",
+      "nodejs",
+      "api"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Nextcaller/nextcaller-nodejs-api.git"
+    },  
+    "author": "Ihar Niamilentsau <trezorg@gmail.com> (https://nextcaller.com/)",
+    "licenses": [{
+        "type": "MIT",
+        "url": "https://github.com/Nextcaller/nextcaller-nodejs-api/blob/master/LICENSE"
+      }
+    ],      
+    "dependencies": {
+      "should": ">0.0.0",
+      "mocha": ">0.0.0",
+      "nock": ">0.0.0"
+    }
 }

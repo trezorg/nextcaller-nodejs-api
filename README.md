@@ -46,7 +46,7 @@ API Items
 
 ### Get profile by phone ###
 
-    res = client.getPhone(number, success_callback, error_callback)
+    client.getPhone(number, success_callback, error_callback)
     
     Parameters:
     
@@ -62,7 +62,7 @@ API Items
 
 ### Get profile by id ###
 
-    res = client.getProfile(profile_id, success_callback, error_callback)
+    client.getProfile(profile_id, success_callback, error_callback)
     
     Parameters:
     
@@ -90,7 +90,7 @@ API Items
     }
     error_callback - function called on an error
     function error_callback(error) {
-        console.log(e.message);
+        console.log(error);
     }
 
     Example:
