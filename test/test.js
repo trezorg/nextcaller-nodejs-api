@@ -99,6 +99,7 @@ var should = require("should"),
     }, profile_request_object = {
         "first_name": "Clark",
         "last_name": "Kent",
+        "email": "test@test.com",
         "shipping_address1": {
             "line1": "225 Kryptonite Ave.",
             "line2": "",
@@ -167,16 +168,16 @@ describe("getProfile with incorrect profile id", function () {
         nock("https://api.nextcaller.com")
             .get("/v2/users/" + wrong_profile_id + "/?format=json")
             .reply(404, "");
-        client.getProfile(wrong_profile_id, null, function (data, status_code) {
+        client.getProfile(wrong_profile_id, null, function (error, status_code) {
             status_code.should.equal(404);
-            data.should.equal("");
+            error.should.equal("");
             done();
         });
     });
 });
 
 
-describe("updateProfile changing email", function () {
+describe("updateProfile with correct profile id", function () {
     it("should return the correct response", function (done) {
         nock("https://api.nextcaller.com")
             .post("/v2/users/" + profile_id + "/?format=json")
@@ -184,6 +185,20 @@ describe("updateProfile changing email", function () {
         client.updateProfile(profile_id, profile_request_object, function (data, status_code) {
             status_code.should.equal(204);
             data.should.equal("");
+            done();
+        });
+    });
+});
+
+
+describe("updateProfile with incorrect profile id", function () {
+    it("should return 404 response", function (done) {
+        nock("https://api.nextcaller.com")
+            .post("/v2/users/" + wrong_profile_id + "/?format=json")
+            .reply(404, "");
+        client.updateProfile(wrong_profile_id, profile_request_object, null, function (error, status_code) {
+            status_code.should.equal(404);
+            error.should.equal("");
             done();
         });
     });
