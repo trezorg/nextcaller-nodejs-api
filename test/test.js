@@ -12,8 +12,8 @@ var should = require("should"),
     profile_id = "97d949a413f4ea8b85e9586e1f2d9a",
     wrong_profile_id = profile_id + "XXXXXXXXXXX",
     api_key = "XXXXXXXXXXXXX",
-    apio_secret = "YYYYYYYYYYYYYYY",
-    client = new (require("../index.js").Client)(api_key, apio_secret),
+    api_secret = "YYYYYYYYYYYYYYY",
+    client = new (require("../index.js").NextCallerClient)(api_key, api_secret),
     phone_response_object = {
         "records": [
             {

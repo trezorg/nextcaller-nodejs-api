@@ -18,8 +18,9 @@ Example
     var api_key = "XXXXX",
         api_secret = "XXXXX",
         phone_number = "121212...",
+        sandbox = false,
         module = require("nextcaller-nodejs-api"),
-        client = module.Client(api_key, api_secret);
+        client = module.NextCallerClient(api_key, api_secret, sandbox);
     client.getPhone(phone_number, function (data, status_code) {
         console.log(data);
         console.log(status_code);
@@ -29,18 +30,20 @@ Example
     });
 
 
-Client
--------------
+NextCallerClient
+-----------------
 
     var api_key = "XXXXX",
         api_secret = "XXXXX",
+        sandbox = false,
         module = require("nextcaller-nodejs-api"),
-        client = module.Client(api_key, api_secret);
+        client = module.NextCallerClient(api_key, api_secret, sandbox);
 
     Parameters:
 
     api_key - api key
     api_secret - api secret
+    sandbox - sandbox mode
 
 
 API Items

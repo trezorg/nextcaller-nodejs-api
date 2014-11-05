@@ -6,6 +6,7 @@
 
 var https = require('https'),
     hostname = 'api.nextcaller.com',
+    sandboxHostname = 'api.sandbox.nextcaller.com',
     port = 443,
     json_content_type = 'application/json; charset=utf-8';
 
@@ -61,17 +62,25 @@ function make_request(options, success_callback, error_callback, data) {
     req.end();
 }
 
-function Client(api_key, api_secret) {
-    if (!(this instanceof Client)) {
-        return new Client(api_key, api_secret);
+function NextCallerClient(api_key, api_secret, sandbox) {
+    if (!(this instanceof NextCallerClient)) {
+        return new NextCallerClient(api_key, api_secret, sandbox);
     }
     this.api_key = api_key;
     this.api_secret = api_secret;
+    this.sandbox = sandbox;
+    this.getBaseHostname = function () {
+        return this.sandbox ?  sandboxHostname : hostname;
+    };
 }
 
-Client.prototype.getPhone = function(phone, success_callback, error_callback) {
+NextCallerClient.prototype.changeSandboxMode = function(sandbox) {
+    this.sandbox = !!sandbox;
+};
+
+NextCallerClient.prototype.getPhone = function(phone, success_callback, error_callback) {
     var options = {
-        hostname: hostname,
+        hostname: this.getBaseHostname(),
         port: port,
         path: '/v2/records/?format=json&phone=' + phone,
         method: 'GET',
@@ -80,9 +89,9 @@ Client.prototype.getPhone = function(phone, success_callback, error_callback) {
     make_request(options, success_callback, error_callback);
 };
 
-Client.prototype.getProfile = function(profile_id, success_callback, error_callback) {
+NextCallerClient.prototype.getProfile = function(profile_id, success_callback, error_callback) {
     var options = {
-        hostname: hostname,
+        hostname: this.getBaseHostname(),
         port: port,
         path: '/v2/users/' + profile_id + '/?format=json',
         method: 'GET',
@@ -91,10 +100,10 @@ Client.prototype.getProfile = function(profile_id, success_callback, error_callb
     make_request(options, success_callback, error_callback);
 };
 
-Client.prototype.updateProfile = function(profile_id, data, success_callback, error_callback) {
+NextCallerClient.prototype.updateProfile = function(profile_id, data, success_callback, error_callback) {
     var json_data = JSON.stringify(data),
         options = {
-            hostname: hostname,
+            hostname: this.getBaseHostname(),
             port: port,
             path: '/v2/users/' + profile_id + '/?format=json',
             method: 'POST',
@@ -108,5 +117,5 @@ Client.prototype.updateProfile = function(profile_id, data, success_callback, er
 };
 
 module.exports = {
-    'Client': Client
+    'NextCallerClient': NextCallerClient
 };
