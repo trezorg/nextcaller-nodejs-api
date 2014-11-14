@@ -7,8 +7,9 @@
 var https = require('https'),
     hostname = 'api.nextcaller.com',
     sandboxHostname = 'api.sandbox.nextcaller.com',
+    defaultApiVersion = 'v2',
     port = 443,
-    json_content_type = 'application/json; charset=utf-8';
+    jsonContentType = 'application/json; charset=utf-8';
 
 
 function make_request(options, success_callback, error_callback, data) {
@@ -62,54 +63,49 @@ function make_request(options, success_callback, error_callback, data) {
     req.end();
 }
 
-function NextCallerClient(api_key, api_secret, sandbox) {
+function NextCallerClient(username, password, sandbox, version) {
     if (!(this instanceof NextCallerClient)) {
-        return new NextCallerClient(api_key, api_secret, sandbox);
+        return new NextCallerClient(username, password, sandbox, version);
     }
-    this.api_key = api_key;
-    this.api_secret = api_secret;
-    this.sandbox = sandbox;
-    this.getBaseHostname = function () {
-        return this.sandbox ?  sandboxHostname : hostname;
-    };
+    this.username = username;
+    this.password = password;
+    this.sandbox = !!sandbox;
+    this.version = version || defaultApiVersion;
+    this.base_url =  this.sandbox ?  sandboxHostname : hostname;
 }
 
-NextCallerClient.prototype.changeSandboxMode = function(sandbox) {
-    this.sandbox = !!sandbox;
-};
-
-NextCallerClient.prototype.getPhone = function(phone, success_callback, error_callback) {
+NextCallerClient.prototype.getByPhone = function(phone, success_callback, error_callback) {
     var options = {
-        hostname: this.getBaseHostname(),
+        hostname: this.base_url,
         port: port,
-        path: '/v2/records/?format=json&phone=' + phone,
+        path: '/' + this.version + '/records/?format=json&phone=' + phone,
         method: 'GET',
-        auth: this.api_key + ':' + this.api_secret
+        auth: this.username + ':' + this.password
     };
     make_request(options, success_callback, error_callback);
 };
 
-NextCallerClient.prototype.getProfile = function(profile_id, success_callback, error_callback) {
+NextCallerClient.prototype.getByProfileId = function(profile_id, success_callback, error_callback) {
     var options = {
-        hostname: this.getBaseHostname(),
+        hostname: this.base_url,
         port: port,
-        path: '/v2/users/' + profile_id + '/?format=json',
+        path: '/' + this.version + '/users/' + profile_id + '/?format=json',
         method: 'GET',
-        auth: this.api_key + ':' + this.api_secret
+        auth: this.username + ':' + this.password
     };
     make_request(options, success_callback, error_callback);
 };
 
-NextCallerClient.prototype.updateProfile = function(profile_id, data, success_callback, error_callback) {
+NextCallerClient.prototype.updateByProfileId = function(profile_id, data, success_callback, error_callback) {
     var json_data = JSON.stringify(data),
         options = {
-            hostname: this.getBaseHostname(),
+            hostname: this.base_url,
             port: port,
-            path: '/v2/users/' + profile_id + '/?format=json',
+            path: '/' + this.version + '/users/' + profile_id + '/?format=json',
             method: 'POST',
-            auth: this.api_key + ':' + this.api_secret,
+            auth: this.username + ':' + this.username,
             headers: {
-                'Content-Type': json_content_type,
+                'Content-Type': jsonContentType,
                 'Content-Length': json_data.length
             }
     };
@@ -117,5 +113,8 @@ NextCallerClient.prototype.updateProfile = function(profile_id, data, success_ca
 };
 
 module.exports = {
-    'NextCallerClient': NextCallerClient
+    'NextCallerClient': NextCallerClient,
+    'hostname': hostname,
+    'sandboxHostname': sandboxHostname,
+    'defaultApiVersion': defaultApiVersion
 };
