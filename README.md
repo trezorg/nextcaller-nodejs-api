@@ -15,13 +15,14 @@ Installation:
 Example
 -------
 
-    var api_key = "XXXXX",
-        api_secret = "XXXXX",
+    var username = "XXXXX",
+        password = "XXXXX",
         phone_number = "121212...",
         sandbox = false,
+        version = 'v2'
         module = require("nextcaller-nodejs-api"),
-        client = module.NextCallerClient(api_key, api_secret, sandbox);
-    client.getPhone(phone_number, function (data, status_code) {
+        client = module.NextCallerClient(username, password, sandbox, version);
+    client.getByPhone(phone_number, function (data, status_code) {
         console.log(data);
         console.log(status_code);
     }, function (error, status_code) {
@@ -33,17 +34,19 @@ Example
 NextCallerClient
 -----------------
 
-    var api_key = "XXXXX",
-        api_secret = "XXXXX",
+    var username = "XXXXX",
+        password = "XXXXX",
         sandbox = false,
+        version = 'v2'
         module = require("nextcaller-nodejs-api"),
-        client = module.NextCallerClient(api_key, api_secret, sandbox);
+        client = module.NextCallerClient(username, password, sandbox, version);
 
     Parameters:
 
-    api_key - api key
-    api_secret - api secret
+    username - username
+    password - password
     sandbox - sandbox mode
+    version - api version, default 'v2'
 
 
 API Items
@@ -51,7 +54,7 @@ API Items
 
 ### Get profile by phone ###
 
-    client.getPhone(number, success_callback, error_callback)
+    client.getByPhone(number, success_callback, error_callback)
     
     Parameters:
     
@@ -69,7 +72,7 @@ API Items
 
 ### Get profile by id ###
 
-    client.getProfile(profile_id, success_callback, error_callback)
+    client.getByProfileId(profile_id, success_callback, error_callback)
     
     Parameters:
     
@@ -87,7 +90,7 @@ API Items
 
 ### Update profile ###
 
-    client.updateProfile(profile_id, data, success_callback, error_callback)
+    client.updateByProfileId(profile_id, data, success_callback, error_callback)
     
     Parameters:
     
@@ -117,4 +120,4 @@ API Items
         console.log("Error: ", error);
         console.log("Status code: ",status_code);
     }
-    client.updateProfile(profile_id, data, success_callback, error_callback);
+    client.updateByProfileId(profile_id, data, success_callback, error_callback);

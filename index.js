@@ -12,29 +12,29 @@ var https = require('https'),
     jsonContentType = 'application/json; charset=utf-8';
 
 
-function make_request(options, success_callback, error_callback, data) {
+function make_request(options, successCallback, errorCallback, data) {
 
-    var error_handler = function (err, status_code) {
-        var json_message = err.message || err;
+    var errorHandler = function (err, statusCode) {
+        var jsonMessage = err.message || err;
         try {
-            json_message = JSON.parse(json_message);
+            jsonMessage = JSON.parse(jsonMessage);
         } catch (error) {}
-        if (typeof(error_callback) === 'function') {
-            error_callback(json_message, status_code);
+        if (typeof(errorCallback) === 'function') {
+            errorCallback(jsonMessage, statusCode);
         } else {
-            console.log(json_message);
+            console.log(jsonMessage);
         }
     };
 
-    var success_handler = function (data, status_code) {
-        var json_message = data;
+    var successHandler = function (data, statusCode) {
+        var jsonMessage = data;
         try {
-            json_message = JSON.parse(data);
+            jsonMessage = JSON.parse(data);
         } catch (error) {}
-        if (typeof(success_callback) === 'function') {
-            success_callback(json_message, status_code);
+        if (typeof(successCallback) === 'function') {
+            successCallback(jsonMessage, statusCode);
         } else {
-            console.log(json_message);
+            console.log(jsonMessage);
         }
     };
 
@@ -46,15 +46,15 @@ function make_request(options, success_callback, error_callback, data) {
         });
         res.on('end', function() {
             if (res.statusCode >= 400) {
-                error_handler(body, res.statusCode);
+                errorHandler(body, res.statusCode);
             } else {
-                success_handler(body, res.statusCode);
+                successHandler(body, res.statusCode);
             }
         });
     });
 
     req.on('error', function(err) {
-        error_handler(err);
+        errorHandler(err);
     });
 
     if (data) {
@@ -69,12 +69,11 @@ function NextCallerClient(username, password, sandbox, version) {
     }
     this.username = username;
     this.password = password;
-    this.sandbox = !!sandbox;
     this.version = version || defaultApiVersion;
-    this.base_url =  this.sandbox ?  sandboxHostname : hostname;
+    this.base_url =  !!sandbox ?  sandboxHostname : hostname;
 }
 
-NextCallerClient.prototype.getByPhone = function(phone, success_callback, error_callback) {
+NextCallerClient.prototype.getByPhone = function(phone, successCallback, errorCallback) {
     var options = {
         hostname: this.base_url,
         port: port,
@@ -82,38 +81,120 @@ NextCallerClient.prototype.getByPhone = function(phone, success_callback, error_
         method: 'GET',
         auth: this.username + ':' + this.password
     };
-    make_request(options, success_callback, error_callback);
+    make_request(options, successCallback, errorCallback);
 };
 
-NextCallerClient.prototype.getByProfileId = function(profile_id, success_callback, error_callback) {
+NextCallerClient.prototype.getByProfileId = function(profileId, successCallback, errorCallback) {
     var options = {
         hostname: this.base_url,
         port: port,
-        path: '/' + this.version + '/users/' + profile_id + '/?format=json',
+        path: '/' + this.version + '/users/' + profileId + '/?format=json',
         method: 'GET',
         auth: this.username + ':' + this.password
     };
-    make_request(options, success_callback, error_callback);
+    make_request(options, successCallback, errorCallback);
 };
 
-NextCallerClient.prototype.updateByProfileId = function(profile_id, data, success_callback, error_callback) {
-    var json_data = JSON.stringify(data),
+NextCallerClient.prototype.updateByProfileId = function(profileId, data, successCallback, errorCallback) {
+    var jsonData = JSON.stringify(data),
         options = {
             hostname: this.base_url,
             port: port,
-            path: '/' + this.version + '/users/' + profile_id + '/?format=json',
+            path: '/' + this.version + '/users/' + profileId + '/?format=json',
             method: 'POST',
             auth: this.username + ':' + this.username,
             headers: {
                 'Content-Type': jsonContentType,
-                'Content-Length': json_data.length
+                'Content-Length': jsonData.length
             }
     };
-    make_request(options, success_callback, error_callback, json_data);
+    make_request(options, successCallback, errorCallback, jsonData);
+};
+
+/* Platform client */
+
+function NextCallerPlatformClient(username, password, sandbox, version) {
+    if (!(this instanceof NextCallerPlatformClient)) {
+        return new NextCallerPlatformClient(username, password, sandbox, version);
+    }
+    this.username = username;
+    this.password = password;
+    this.sandbox = !!sandbox;
+    this.version = version || defaultApiVersion;
+    this.base_url =  this.sandbox ?  sandboxHostname : hostname;
+}
+
+NextCallerPlatformClient.prototype.getByPhone = function(phone, platformUsername, successCallback, errorCallback) {
+    var options = {
+        hostname: this.base_url,
+        port: port,
+        path: '/' + this.version + '/records/?format=json&phone=' +
+            phone + '&platform_username=' + platformUsername,
+        method: 'GET',
+        auth: this.username + ':' + this.password
+    };
+    make_request(options, successCallback, errorCallback);
+};
+
+NextCallerPlatformClient.prototype.getByProfileId = function(profileId, platformUsername, successCallback, errorCallback) {
+    var options = {
+        hostname: this.base_url,
+        port: port,
+        path: '/' + this.version + '/users/' + profileId + '/?format=json' +
+            '&platform_username=' + platformUsername,
+        method: 'GET',
+        auth: this.username + ':' + this.password
+    };
+    make_request(options, successCallback, errorCallback);
+};
+
+NextCallerPlatformClient.prototype.updateByProfileId = function(profileId, data, platformUsername, successCallback, errorCallback) {
+    var jsonData = JSON.stringify(data),
+        options = {
+            hostname: this.base_url,
+            port: port,
+            path: '/' + this.version + '/users/' + profileId + '/?format=json' +
+                '&platform_username=' + platformUsername,
+            method: 'POST',
+            auth: this.username + ':' + this.username,
+            headers: {
+                'Content-Type': jsonContentType,
+                'Content-Length': jsonData.length
+            }
+    };
+    make_request(options, successCallback, errorCallback, jsonData);
+};
+
+NextCallerPlatformClient.prototype.getPlatformStatistics = function(platformUsername, successCallback, errorCallback) {
+    var options = {
+        hostname: this.base_url,
+        port: port,
+        path: '/' + this.version + '/platform_users/' + (platformUsername ? platformUsername + '/' : '') + '?format=json',
+        method: 'GET',
+        auth: this.username + ':' + this.username
+    };
+    make_request(options, successCallback, errorCallback);
+};
+
+NextCallerPlatformClient.prototype.updatePlatformUser = function(platformUsername, data, successCallback, errorCallback) {
+    var jsonData = JSON.stringify(data),
+        options = {
+            hostname: this.base_url,
+            port: port,
+            path: '/' + this.version + '/platform_users/' + platformUsername + '/?format=json',
+            method: 'POST',
+            auth: this.username + ':' + this.username,
+            headers: {
+                'Content-Type': jsonContentType,
+                'Content-Length': jsonData.length
+            }
+    };
+    make_request(options, successCallback, errorCallback, jsonData);
 };
 
 module.exports = {
     'NextCallerClient': NextCallerClient,
+    'NextCallerPlatformClient': NextCallerPlatformClient,
     'hostname': hostname,
     'sandboxHostname': sandboxHostname,
     'defaultApiVersion': defaultApiVersion
