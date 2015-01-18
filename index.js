@@ -165,11 +165,25 @@ NextCallerPlatformClient.prototype.updateByProfileId = function(profileId, data,
     make_request(options, successCallback, errorCallback, jsonData);
 };
 
-NextCallerPlatformClient.prototype.getPlatformStatistics = function(platformUsername, successCallback, errorCallback) {
+NextCallerPlatformClient.prototype.getPlatformStatistics = function(page, successCallback, errorCallback) {
+    if (!page) {
+        page = 1;
+    }
     var options = {
         hostname: this.base_url,
         port: port,
-        path: '/' + this.version + '/platform_users/' + (platformUsername ? platformUsername + '/' : '') + '?format=json',
+        path: '/' + this.version + '/platform_users/?format=json&page=' + page,
+        method: 'GET',
+        auth: this.username + ':' + this.username
+    };
+    make_request(options, successCallback, errorCallback);
+};
+
+NextCallerPlatformClient.prototype.getPlatformUser = function(platform_username, successCallback, errorCallback) {
+    var options = {
+        hostname: this.base_url,
+        port: port,
+        path: '/' + this.version + '/platform_users/' + platform_username + '/?format=json',
         method: 'GET',
         auth: this.username + ':' + this.username
     };

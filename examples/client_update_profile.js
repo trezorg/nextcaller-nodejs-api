@@ -4,8 +4,11 @@ var username = "XXXXX",
     sandbox = false,
     version = 'v2',
     module = require("../index.js"),
+    data = {
+        'email': 'test@test.com'
+    },
     client = module.NextCallerClient(username, password, sandbox, version);
-client.getByProfileId(profile_id, function (data, status_code) {
+client.updateByProfileId(profile_id, data, function (data, status_code) {
     console.log(data);
     console.log(status_code);
 }, function (error, status_code) {

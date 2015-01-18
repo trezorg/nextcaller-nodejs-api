@@ -318,12 +318,13 @@ describe("platformClient get platform statistics", function () {
     it("should return the correct response", function (done) {
         var platformResponseResponseObjectStr = JSON.stringify(platformStatisticsResponseObject);
         nock("https://" + apiHostname)
-            .get("/" + apiVersion + "/platform_users/?format=json")
+            .get("/" + apiVersion + "/platform_users/?format=json&page=1")
             .reply(200, platformResponseResponseObjectStr);
-        platformClient.getPlatformStatistics(null, function (data, statusCode) {
+        platformClient.getPlatformStatistics(1, function (data, statusCode) {
             statusCode.should.equal(200);
             data.object_list[0].username.should.equal(platformUsername);
             data.object_list[0].number_of_operations.should.equal(3);
+            data.page.should.equal(1);
             done();
         });
     });
@@ -337,7 +338,7 @@ describe("platformClient get platform statistics by user", function () {
         nock("https://" + apiHostname)
             .get(path)
             .reply(200, platformResponseByUserResponseObjectStr);
-        platformClient.getPlatformStatistics(platformUsername, function (data, statusCode) {
+        platformClient.getPlatformUser(platformUsername, function (data, statusCode) {
             statusCode.should.equal(200);
             data.username.should.equal(platformUsername);
             data.number_of_operations.should.equal(3);
