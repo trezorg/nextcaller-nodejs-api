@@ -2,7 +2,7 @@ var username = "XXXXX",
     password = "XXXXX",
     sandbox = false,
     version = 'v2',
-    module = require("../index.js"),
+    module = require("nextcaller-nodejs-api"),
     platfom_username = 'test1',
     data = {
         'email': 'test@test.com'

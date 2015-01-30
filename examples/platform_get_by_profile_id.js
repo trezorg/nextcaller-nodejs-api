@@ -4,7 +4,7 @@ var username = "XXXXX",
     sandbox = false,
     version = 'v2',
     platform_username = 'test',
-    module = require("../index.js"),
+    module = require("nextcaller-nodejs-api"),
     client = module.NextCallerPlatformClient(username, password, sandbox, version);
 client.getByProfileId(profile_id, platform_username, function (data, status_code) {
     console.log(data);

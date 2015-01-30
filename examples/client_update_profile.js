@@ -3,7 +3,7 @@ var username = "XXXXX",
     profile_id = "XXXXXXXXX",
     sandbox = false,
     version = 'v2',
-    module = require("../index.js"),
+    module = require("nextcaller-nodejs-api"),
     data = {
         'email': 'test@test.com'
     },
